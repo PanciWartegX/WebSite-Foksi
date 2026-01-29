@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Absensi FOKSI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 flex items-center justify-center h-screen">
+
+    <div class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-xl fade-in border border-slate-100">
+        <div class="text-center mb-6">
+            <div class="bg-indigo-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-user-check text-white text-xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800">Absensi FOKSI</h2>
+            <p class="text-slate-500 text-sm">Silakan login untuk melanjutkan</p>
+        </div>
+
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Username</label>
+                <input type="text" id="username" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Username" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                <input type="password" id="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Password" required>
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg transition shadow-md active:scale-95">
+                Masuk
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-xs text-slate-400 bg-slate-100 p-3 rounded">
+            <p><strong>Admin Default:</strong> user: <code>admin</code> | pass: <code>admin123</code></p>
+        </div>
+    </div>
+
+    <!-- Script Utama -->
+    <script src="script.js"></script>
+    <script>
+        // Init khusus halaman login
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthOnLogin(); // Cek jika user sudah login, lempar ke dashboard
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        });
+    </script>
+</body>
+</html>
