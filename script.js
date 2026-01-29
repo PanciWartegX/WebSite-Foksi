@@ -382,3 +382,11 @@ function showToast(msg, type = 'success') {
 function capitalize(s) {
     return s && s[0].toUpperCase() + s.slice(1);
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('loginForm')) {
+        checkAuthOnLogin();
+        document.getElementById('loginForm')
+            .addEventListener('submit', handleLogin);
+    }
+});
