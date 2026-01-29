@@ -3,45 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Absensi FOKSI</title>
+    <title>Admin Dashboard - FOKSI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS untuk Export Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-50 flex items-center justify-center h-screen">
+<body class="bg-slate-50 text-slate-800">
 
-    <div class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-xl fade-in border border-slate-100">
-        <div class="text-center mb-6">
-            <div class="bg-indigo-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <i class="fa-solid fa-user-check text-white text-xl"></i>
-            </div>
-            <h2 class="text-2xl font-bold text-slate-800">Absensi FOKSI</h2>
-            <p class="text-slate-500 text-sm">Silakan login untuk melanjutkan</p>
-        </div>
-
-        <form id="loginForm" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Username</label>
-                <input type="text" id="username" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Username" required>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                <input type="password" id="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Password" required>
-            </div>
-            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg transition shadow-md active:scale-95">
-                Masuk
+    <!-- Navbar -->
+    <nav class="bg-indigo-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <span class="font-bold text-lg tracking-wide"><i class="fa-solid fa-shield-halved mr-2"></i>Admin Panel</span>
+            <button onclick="logout()" class="text-sm bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition flex items-center">
+                <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
             </button>
-        </form>
-
-        <div class="mt-6 text-center text-xs text-slate-400 bg-slate-100 p-3 rounded">
-            <p><strong>Admin Default:</strong> user: <code>admin</code> | pass: <code>admin123</code></p>
         </div>
-    </div>
+    </nav>
 
-    <!-- Script Utama -->
-    <script src="script.js"></script>
-    </body>
-</html>
+    <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-6 fade-in">
+        
+        <!-- Tabs -->
+        <div class="flex space-x-2 border-b border-slate-300 pb-1 overflow-x-auto">
+            <button onclick="switchTab('settings')" id="tabSettings" class="tab-btn active">Pengaturan Absen</button>
+            <button onclick="switchTab('users')" id="tabUsers" class="tab-btn">Data Anggota</button>
+            <button onclick="switchTab('report')" id="tabReport" class="tab-btn">Laporan & Export</button>
+        </div>
+
+        <!-- TAB 1: Settings -->
+        <div id="viewSettings" class="view-section grid md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg mb-4 text-indigo-900">Buat Jadwal Baru</h3>
+                <form id="scheduleForm" class="space-y-4">
+                    <input type="text" id="schedName" placeholder="Nama Kegiatan" class="input-field" required>
+                    <input type="date" id="schedDate" class="input-field" required>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="time" id="schedStart" class="input-field" required>
+                        <input type="time" id="schedEnd" class="input-field" required>
+                    </div>
+                    <button type="submit" class="btn-primary w-full">Simpan Jadwal</button>
+                </form>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg mb-4 text-indigo-900">Jadwal Aktif Saat Ini</h3>
+                <div id="activeScheduleDisplay" class="text-center text-slate-500 py-8 bg-slate-50 rounded-lg border border-dashed border-slate-300">
+                    Belum ada jadwal.
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Users -->
+        <div id="viewUsers" class="view-section hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg mb-4">Tambah Anggota</h3>
+                <form id="userForm" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input type="text" id="regName" placeholder="Nama Lengkap" class="input-field" required>
+                    <input type="text" id="regUser" placeholder="Username" class="input-field" required>
+                    <input type="password" id="regPass" placeholder="Password" class="input-field" required>
+                    <input type="text" id="regJob" placeholder="Jabatan" class="input-field" required>
+                    <input type="text" id="regReg" placeholder="Regional" class="input-field" required>
+                    <input type="text" id="regSch" placeholder="Sekolah/Instansi" class="input-field" required>
+                    <div class="md:col-span-3">
+                        <button type="submit" class="btn-primary w-full md:w-auto px-6">Tambah User</button>
+                    </div>
+                </form>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-100 text-slate-600 font-bold">
+                        <tr><th class="p-3">Nama</th><th class="p-3">Username</th><th class="p-3">Jabatan</th><th class="p-3 text-center">Aksi</th></tr>
+                    </thead>
+                    <tbody id="userTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 3: Report -->
+        <div id="viewReport" class="view-section hidden space-y-4">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg">Rekapitulasi Absensi</h3>
+                <button onclick="exportExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center transition shadow">
+                    <i class="fa-solid fa-file-excel mr-2"></i> Download Excel
+                </button>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-100 text-slate-600 font-bold">
+                        <tr>
+                            <th class="p-3">Nama</th>
+                            <th class="p-3">Jabatan</th>
+                            <th class="p-3">Sekolah</th>
+                            <th class="p-3 text-center">Status</th>
+                            <th class="p-3">Waktu</th>
+                            <th class="p-3">Ket</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">Pesan</div>
+
     <script src="script.js"></script>
     <script>
         // Init khusus halaman admin
